@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/usecase/statistics_usecase.dart';
-import 'package:intl/intl.dart';
 
 import 'domain/statistics.dart';
 
@@ -39,7 +38,7 @@ class StatsGrid extends StatefulWidget {
 }
 
 class _StatsGridState extends State<StatsGrid> {
-  Future<Statistics> futureStastics;
+  late Future<Statistics> futureStastics;
 
   @override
   void initState() {
@@ -105,7 +104,7 @@ Expanded _buildStatCard(String title, int count, Color color) => Expanded(
                       fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  NumberFormat("#,###").format(count),
+                  count.toString(),
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 25.0,
@@ -120,8 +119,8 @@ class CovidLineChart extends StatefulWidget {
 }
 
 class _CovidLineChartState extends State<CovidLineChart> {
-  Future<List<Statistics>> futureStastics;
-  Future<List<FlSpot>> spots;
+  late Future<List<Statistics>> futureStastics;
+  late Future<List<FlSpot>> spots;
 
   @override
   void initState() {
@@ -145,7 +144,6 @@ class _CovidLineChartState extends State<CovidLineChart> {
             return Column(
               children: [
                 Container(
-
                   width: 500,
                   decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
@@ -176,13 +174,15 @@ class _CovidLineChartState extends State<CovidLineChart> {
                       padding: const EdgeInsets.only(
                           right: 18.0, left: 12.0, top: 24, bottom: 12),
                       child: LineChart(
-                        mainData(snapShot.data),
+                        mainData(snapShot.data as List<Statistics>),
                       ),
                     ),
                   ),
                 ),
               ],
             );
+          } else {
+            return Container();
           }
         });
   }

@@ -15,7 +15,7 @@ TotalJson _$TotalJsonFromJson(Map<String, dynamic> json) {
     json['severe'] as int,
     json['discharge'] as int,
     json['death'] as int,
-    json['symptomConfirming'] as int,
+    json['symptom_confirming'] as int,
   );
 }
 
@@ -27,5 +27,5 @@ Map<String, dynamic> _$TotalJsonToJson(TotalJson instance) => <String, dynamic>{
       'severe': instance.severe,
       'discharge': instance.discharge,
       'death': instance.death,
-      'symptomConfirming': instance.symptomConfirming,
+      'symptom_confirming': instance.symptomConfirming,
     };
