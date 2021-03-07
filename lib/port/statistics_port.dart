@@ -1,3 +1,4 @@
+import 'package:injectable/injectable.dart';
 import 'package:myapp/domain/statistics.dart';
 import 'package:myapp/driver/covid19_api.dart';
 
@@ -5,8 +6,10 @@ import '../total_json.dart';
 
 abstract class StatisticsPort {
   Future<Statistics> find();
+  Future<List<Statistics>> findAll();
 }
 
+@Injectable(as: StatisticsPort)
 class StatisticsGateway implements StatisticsPort {
   @override
   Future<Statistics> find() async {
@@ -14,6 +17,7 @@ class StatisticsGateway implements StatisticsPort {
     return _toStatistics(response);
   }
 
+  @override
   Future<List<Statistics>> findAll() async {
     final response = await Covid19Api().requestTotalHistory();
     final histories = response.map((e) => _toStatistics(e)).toList();

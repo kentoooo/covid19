@@ -1,88 +1,74 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/injector.dart';
+import 'package:myapp/state/state.dart';
 import 'package:myapp/usecase/statistics_usecase.dart';
+import 'package:provider/provider.dart';
 
 import 'domain/statistics.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  configureDependencies();
+  await getIt<StatisticsUsecase>().find();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
-        home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Color(0xff3D019D),
-          ),
-          backgroundColor: Color(0xff4E019C),
-          body: CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                sliver: SliverToBoxAdapter(child: StatsGrid()),
-              ),
-              SliverPadding(
+        home: ChangeNotifierProvider(
+          create: (_) => getIt<ViewState>(),
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Color(0xff3D019D),
+            ),
+            backgroundColor: Color(0xff4E019C),
+            body: CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  sliver: SliverToBoxAdapter(child: StatsGrid()),
+                ),
+/*               SliverPadding(
                 padding: EdgeInsets.symmetric(horizontal: 10.0),
                 sliver: SliverToBoxAdapter(child: CovidLineChart()),
               )
-            ],
+ */
+              ],
+            ),
           ),
         ));
   }
 }
 
-class StatsGrid extends StatefulWidget {
-  @override
-  _StatsGridState createState() => _StatsGridState();
-}
-
-class _StatsGridState extends State<StatsGrid> {
-  late Future<Statistics> futureStastics;
-
-  @override
-  void initState() {
-    super.initState();
-    futureStastics = StatisticsUsecase().find();
-  }
-
+class StatsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: futureStastics,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final statistics = snapshot.data as Statistics;
-          return Container(
-              height: 350,
-              color: Color(0xff53019B),
-              child: Column(
-                children: [
-                  Flexible(
-                      child: Row(children: [
-                    _buildStatCard(
-                        '感染者', statistics.positive, Color(0xffF9A354)),
-                  ])),
-                  Flexible(
-                      child: Row(children: [
-                    _buildStatCard('PCR検査', statistics.pcr, Color(0xff3ABC62)),
-                    _buildStatCard(
-                        '回復者', statistics.discharge, Color(0xff43C8D9)),
-                  ])),
-                  Flexible(
-                      child: Row(children: [
-                    _buildStatCard(
-                        '入院者', statistics.hospitalize, Color(0xffFECC49)),
-                    _buildStatCard('重傷者', statistics.severe, Color(0xffff6463)),
-                    _buildStatCard('死者', statistics.death, Color(0xff5302C1)),
-                  ]))
-                ],
-              ));
-        } else {
-          return Container();
-        }
-      },
-    );
+    final state = context.watch<ViewState>();
+    return Container(
+        height: 350,
+        color: Color(0xff53019B),
+        child: Column(
+          children: [
+            Flexible(
+                child: Row(children: [
+              _buildStatCard('感染者', state.unit!.positive, Color(0xffF9A354)),
+            ])),
+            Flexible(
+                child: Row(children: [
+              _buildStatCard('PCR検査', state.unit!.pcr, Color(0xff3ABC62)),
+              _buildStatCard('回復者', state.unit!.discharge, Color(0xff43C8D9)),
+            ])),
+            Flexible(
+                child: Row(children: [
+              _buildStatCard('入院者', state.unit!.hospitalize, Color(0xffFECC49)),
+              _buildStatCard('重傷者', state.unit!.severe, Color(0xffff6463)),
+              _buildStatCard('死者', state.unit!.death, Color(0xff5302C1)),
+            ]))
+          ],
+        ));
   }
 }
 
@@ -113,19 +99,24 @@ Expanded _buildStatCard(String title, int count, Color color) => Expanded(
               ])),
     );
 
-class CovidLineChart extends StatefulWidget {
+/* class CovidLineChart extends StatefulWidget {
   @override
   _CovidLineChartState createState() => _CovidLineChartState();
 }
 
 class _CovidLineChartState extends State<CovidLineChart> {
-  late Future<List<Statistics>> futureStastics;
-  late Future<List<FlSpot>> spots;
+  Future<List<Statistics>>? futureStastics;
+  Future<List<FlSpot>>? spots;
 
   @override
   void initState() {
     super.initState();
-    futureStastics = StatisticsUsecase().getHistories();
+    Consumer<StatisticsUsecase>(
+      builder: (context, usecase, child) {
+        futureStastics = usecase.getHistories();
+        return Container();
+      },
+    );
   }
 
   List<Color> gradientColors = [
@@ -276,3 +267,4 @@ class _CovidLineChartState extends State<CovidLineChart> {
     );
   }
 }
+ */
