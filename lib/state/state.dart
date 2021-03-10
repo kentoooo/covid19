@@ -10,7 +10,6 @@ class ViewState extends ChangeNotifier with State {
 
   StatisticsUnit? unit;
 }
-
 class StatisticsUnit {
   final int pcr;
   final int positive;
@@ -21,7 +20,6 @@ class StatisticsUnit {
 
   StatisticsUnit(this.pcr, this.positive, this.discharge, this.hospitalize, this.severe, this.death);
 }
-
 
 abstract class State {
   void updateComplete();

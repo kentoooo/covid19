@@ -16,8 +16,8 @@ class StatisticsUsecase extends ChangeNotifier{
     _presenter.setAll(stastics);
   }
 
-  Future<List<Statistics>> getHistories() async {
+  Future<void> getHistories() async {
     final histories = await _statisticsPort.findAll();
-    return histories;
+    _presenter.setLineChart(histories);
   }
 }
